@@ -9,7 +9,14 @@ load_dotenv()
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if not DATABASE_URL:
-    raise ValueError("A variável DATABASE_URL não foi definida no arquivo .env")
+    try:
+        import streamlit as st
+        DATABASE_URL = st.secrets.get("DATABASE_URL")
+    except Exception:
+        pass
+
+if not DATABASE_URL:
+    raise ValueError("A variável DATABASE_URL não foi definida no .env ou em st.secrets")
 
 engine = create_engine(
     DATABASE_URL,
