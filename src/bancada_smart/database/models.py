@@ -1,0 +1,19 @@
+from sqlalchemy import Column, DateTime, Boolean, Integer, BigInteger, String, Text, Enum, func, ForeignKey, Float, \
+    CheckConstraint, UniqueConstraint, ForeignKeyConstraint
+from sqlalchemy.orm import relationship
+
+from bancada_smart.database.db import Base
+
+class Usuario(Base):
+    __tablename__ = "usuarios"
+
+    NIVEL_ACESSO = Enum("admin", "operador", name="nivel_acesso_enum")
+
+    id = Column("id", BigInteger, primary_key=True, autoincrement=True)
+    email = Column("email", String, unique=True, nullable=False)
+    google_sub = Column("google_sub", String, unique=True, nullable=True)
+    nome = Column("nome", String, nullable=False)
+    nivel_acesso = Column(NIVEL_ACESSO, default="operador", nullable=False)
+    ativo = Column("ativo", Boolean, nullable=False, default=True)
+    criado_em = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    criado_por = Column(BigInteger, ForeignKey("usuarios.id"), nullable=True)
